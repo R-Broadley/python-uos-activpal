@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='uos_activpal',
-    version='0.1.4',
+    version='0.2.0',
     description='A package for working with activPAL data',
     author='Rob Broadley',
     author_email='software@rbroadley.co.uk',

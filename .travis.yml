@@ -6,7 +6,6 @@ install:
 - pip install -r requirements.txt
 script:
 - echo "TODO"
-- echo $TRAVIS_TAG
 deploy:
   - provider: pypi
     user: R-Broadley
