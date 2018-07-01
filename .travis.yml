@@ -1,0 +1,29 @@
+language: python
+sudo: false
+python:
+- '3.6'
+install:
+- pip install -r requirements.txt
+script:
+- echo "TODO"
+- echo $TRAVIS_TAG
+deploy:
+  - provider: pypi
+    user: R-Broadley
+    password:
+      secure: f7YlIVSNRVpf+fTmjcAFru7p0SAKUyk+h5BzfYWFNx3T5j8FCWBkZX9+A6jKjLNHCKOdyYmCQ7YjqiOBiL1RA0sZyanfapJVfiqQbLYhtZhkoNxVrLxWPU1tJoC/GMufG+gJ6X55NQKOmu7MaSpoT/gDeYUJRz8qOTYCM/2MCQt7la1MnR+S2vTCEmScEBEyaLqzktV+w/9VywdHzlzeeM3nKEV6eXhIDFcQXXX10OlUrdidTORQNY4IB1ZPXrvvmMxeUlIp2rErKejp+MMGGZCT7cKZnumkWXoqDLmz5pT/viBgIioaNpDS1WA2Iw2Aozvas6yh8UvdTkhpkmd7poqMePzfaFvKL5aZlGt74v/3v45WDpO26rxTRCb/zQbsoOtc/PPp45wLU5AY6F6rJdnb01o45sWqCVsEG/QxJoE+ISqLhyPHhdzSKa7RkB6nKNFhpAo4K2jU6TCE1thfRUrZzxtP5N7F3IVeBaoAeGWRFdXX8+rWlTo4tWzzRtK00W2TrFZFtYOcOy11cPgGFQR5ZGcXjRpmtXGtd9SS3LGk7axWYwZR0lMxioITwgn+fEzQMYOrVEjkp9xIDtqAWQYlgT+3q5RrHL/7zV931d/uQ8o9QOECL3OqWlgGElWVJEloT4P5YiaDzxIYYT+o0DpdRUW4CvbEe3mAm6fLIyw=
+    server: https://test.pypi.org/legacy/
+    on:
+      tags: true
+      all_branches: true
+      condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+RC[0-9]$
+    distributions: sdist bdist_wheel
+  - provider: pypi
+    user: R-Broadley
+    password:
+      secure: f7YlIVSNRVpf+fTmjcAFru7p0SAKUyk+h5BzfYWFNx3T5j8FCWBkZX9+A6jKjLNHCKOdyYmCQ7YjqiOBiL1RA0sZyanfapJVfiqQbLYhtZhkoNxVrLxWPU1tJoC/GMufG+gJ6X55NQKOmu7MaSpoT/gDeYUJRz8qOTYCM/2MCQt7la1MnR+S2vTCEmScEBEyaLqzktV+w/9VywdHzlzeeM3nKEV6eXhIDFcQXXX10OlUrdidTORQNY4IB1ZPXrvvmMxeUlIp2rErKejp+MMGGZCT7cKZnumkWXoqDLmz5pT/viBgIioaNpDS1WA2Iw2Aozvas6yh8UvdTkhpkmd7poqMePzfaFvKL5aZlGt74v/3v45WDpO26rxTRCb/zQbsoOtc/PPp45wLU5AY6F6rJdnb01o45sWqCVsEG/QxJoE+ISqLhyPHhdzSKa7RkB6nKNFhpAo4K2jU6TCE1thfRUrZzxtP5N7F3IVeBaoAeGWRFdXX8+rWlTo4tWzzRtK00W2TrFZFtYOcOy11cPgGFQR5ZGcXjRpmtXGtd9SS3LGk7axWYwZR0lMxioITwgn+fEzQMYOrVEjkp9xIDtqAWQYlgT+3q5RrHL/7zV931d/uQ8o9QOECL3OqWlgGElWVJEloT4P5YiaDzxIYYT+o0DpdRUW4CvbEe3mAm6fLIyw=
+    on:
+      tags: true
+      branch: master
+      condition: $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]\.[0-9]+$
+    distributions: sdist bdist_wheel
