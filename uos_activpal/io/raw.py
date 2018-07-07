@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 This module contains tools for working with activPAL raw data files.
-
-Created on 06 Dec 2016
-
-@author: R-Broadley
 """
 
+# Created on 06 Dec 2016
+# @author: R-Broadley
 
 from collections import namedtuple
 from datetime import datetime
@@ -25,7 +23,8 @@ _Meta = namedtuple('Meta', [
 
 
 class Meta(_Meta):
-    """A namedtuple with fields for the activPAL raw data's metadata.
+    """
+    A namedtuple with fields for the activPAL raw data's metadata.
 
     Parameters
     ----------
@@ -47,7 +46,8 @@ class Meta(_Meta):
 
 
 def change_file_code(file_path, new_code):
-    """Modifies the file code in the header of an activPAL raw data file.
+    """
+    Modifies the file code in the header of an activPAL raw data file.
 
     Parameters
     ----------
@@ -74,7 +74,8 @@ def change_file_code(file_path, new_code):
 
 
 def extract_metadata_from_file(file_path):
-    """Returns a Meta object with the metadata from the given activPAL data file.
+    """
+    Returns a Meta object with the metadata from the given activPAL data file.
 
     Parameters
     ----------
@@ -100,7 +101,8 @@ def extract_metadata_from_file(file_path):
 
 
 def extract_metadata(header):
-    """Returns a Meta object with the metadata from the given uint8 array.
+    """
+    Returns a Meta object with the metadata from the given uint8 array.
 
     Parameters
     ----------
@@ -177,7 +179,8 @@ def _old_tail_check(x):
 
 @jit
 def extract_accelerometer_data(body, firmware, datx):
-    """Returns a numpyndarray with the signals from the given uint8 array.
+    """
+    Returns a numpyndarray with the signals from the given uint8 array.
 
     Parameters
     ----------
@@ -253,7 +256,8 @@ def extract_accelerometer_data(body, firmware, datx):
 
 
 def load_activpal_data(file_path):
-    """Returns the data from an activPAL data file as (metadata, signals).
+    """
+    Returns the data from an activPAL data file as (metadata, signals).
 
     Parameters
     ----------
@@ -262,10 +266,10 @@ def load_activpal_data(file_path):
 
     Returns
     -------
-    (metadata, signals)
-        metadata is a uos_activpal.io.raw.Meta class containing information
-            extracted from the files header.
-        signals is an numpy.ndarray with a column for each axis of the device.
+    metadata : uos_activpal.io.raw.Meta
+        A namedtuple containing information extracted from the files header.
+    signals : numpy.ndarray
+        An array with a column for each axis of the device.
 
     See Also
     --------
@@ -292,14 +296,15 @@ def load_activpal_data(file_path):
 
 
 class ActivpalData(object):
-    """An object to wrap activPAL data.
+    """
+    An object to wrap activPAL data.
 
     Attributes
     ----------
     metadata : namedtuple
-        The informations extracted from the files header.
+        The information extracted from the files header.
     signals : pandas.DataFrame
-        An DataFrame where each column contains data from the recording.
+        A DataFrame where each column contains data from the recording.
 
     Methods
     -------

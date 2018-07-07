@@ -3,7 +3,7 @@
 """
 A GUI application to view the raw activPAL accelerometer data.
 
-Created on Thu Jun 21 2017
+Created on 21 Jun 2017
 
 @author: R-Broadley
 """
