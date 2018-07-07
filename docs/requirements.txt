@@ -1,0 +1,7 @@
+sphinxcontrib-napoleon
+matplotlib>=2.2.2
+numba>=0.38.0
+numpy>=1.14.3
+pandas>=0.23.0
+PyQt5>=5.10.1
+scipy>=1.1.0

@@ -14,7 +14,17 @@
 #
 import os
 import sys
-sys.path.insert(0, '/home/rob/Documents/software-projects/python-uos-activpal')
+sys.path.insert(0, os.path.abspath('../'))
+
+# Mock packages
+from unittest import mock
+
+MOCK_MODULES = ['numpy', 'pandas', 'numba', 'scipy', 'scipy.signal',
+                'matplotlib', 'matplotlib.backends.backend_qt5agg',
+                'matplotlib.figure', 'matplotlib.gridspec', 'matplotlib.dates',
+                'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 
 # -- Project information -----------------------------------------------------
@@ -188,4 +198,3 @@ epub_exclude_files = ['search.html']
 # -- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
