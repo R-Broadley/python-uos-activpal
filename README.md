@@ -1,5 +1,6 @@
 # python-uos-activpal
 [![Build Status](https://travis-ci.org/R-Broadley/python-uos-activpal.svg?branch=master)](https://travis-ci.org/R-Broadley/python-uos-activpal)
+[![Documentation Status](https://readthedocs.org/projects/uos-activpal/badge/?version=latest)](https://uos-activpal.readthedocs.io/en/latest/?badge=latest)
 [![Python Versions](https://img.shields.io/pypi/pyversions/uos_activpal.svg)](https://github.com/R-Broadley/python-uos-activpal)
 [![License](https://img.shields.io/github/license/R-Broadley/python-uos-activpal.svg)](https://github.com/R-Broadley/python-uos-activpal/blob/master/LICENSE)
 
@@ -9,6 +10,9 @@ A python package for working with data from activPAL devices.
 
 ## Installation
 ```pip install uos_activpal```
+
+## Documentation
+[Available on Read The Docs](https://uos-activpal.readthedocs.io/)
 
 ## Subpackages
 
