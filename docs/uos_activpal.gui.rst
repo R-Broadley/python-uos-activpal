@@ -39,5 +39,4 @@ uos\_activpal.gui.raw\_marker module
    uos_activpal.gui.raw_marker.ConfidenceDialog
    uos_activpal.gui.raw_marker.AnotherPointDialog
    uos_activpal.gui.raw_marker.AnotherFileDialog
-   uos_activpal.gui.raw_marker.ConfidenceSlider
-   
+   uos_activpal.gui.raw_marker.ConfidenceSlider   

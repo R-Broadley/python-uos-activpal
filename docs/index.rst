@@ -7,9 +7,9 @@ Welcome to uos activpal's documentation!
 ========================================
 
 .. toctree::
+    :maxdepth: 2
 
-   uos_activpal.io
-   uos_activpal.gui
+    modules
 
 
 Indices and tables
