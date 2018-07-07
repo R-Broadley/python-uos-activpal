@@ -19,7 +19,7 @@ from matplotlib.figure import Figure
 from matplotlib.gridspec import GridSpec
 import matplotlib.dates as mdates
 from .base import BaseMainWindow, SpacerWidget
-from ..io.raw import activpal_data
+from ..io.raw import ActivpalData
 
 
 class MainWindow(BaseMainWindow):
@@ -125,7 +125,7 @@ class UIFilePlot(QWidget):
     def load_data(self, file_path=None):
         if file_path is not None:
             self.file_path = file_path
-        self.data = activpal_data(self.file_path)
+        self.data = ActivpalData(self.file_path)
 
     def new_plot(self, center=None, width=None):
         # import ipdb; ipdb.set_trace()
