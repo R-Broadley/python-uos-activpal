@@ -17,14 +17,16 @@ import sys
 sys.path.insert(0, os.path.abspath('../'))
 
 # Mock packages
-from unittest import mock
+from unittest.mock import MagicMock
 
 MOCK_MODULES = ['numpy', 'pandas', 'numba', 'scipy', 'scipy.signal',
                 'matplotlib', 'matplotlib.backends.backend_qt5agg',
                 'matplotlib.figure', 'matplotlib.gridspec', 'matplotlib.dates',
-                'PyQt5', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+                'PyQt5', 'PyQt5.QtCore']
+
 for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+  sys.modules[mod_name] = MagicMock()
+sys.modules['PyQt5.QtWidgets'] = MagicMock(QMainWindow=object, QDialog=object, QWidget=object)
 
 
 # -- Project information -----------------------------------------------------
@@ -91,7 +93,7 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
