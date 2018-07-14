@@ -23,12 +23,26 @@ from ..io.raw import ActivpalData
 
 
 class MainWindow(BaseMainWindow):
+    """
+    A BaseMainWindow subclass which displays a plot of raw activPAL data.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a MainWindow.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(MainWindow, self).__init__(parent)
         self.file_path = None
         self.show()
-        self.setup_window()
-        self.setup_toolbar()
+        self._setup_window()
+        self._setup_toolbar()
         self.statusBar().showMessage('Requesting File ...')
         qApp.processEvents()
         self.select_file()
@@ -37,7 +51,8 @@ class MainWindow(BaseMainWindow):
         qApp.processEvents()
         self.statusBar().showMessage('Ready')
 
-    def add_plot_controls(self):
+    def _add_plot_controls(self):
+        """Add pan and zoom controls to main toolbar."""
         zoomlabel = QLabel('Zoom')
         zoominAct = QAction('+', self)
         # import ipdb; ipdb.set_trace()
@@ -61,44 +76,55 @@ class MainWindow(BaseMainWindow):
         self.toolbar.addWidget(panlabel)
         self.toolbar.addAction(panrAct)
 
-    def setup_toolbar(self):
+    def _setup_toolbar(self):
+        """Setup toolbar with plot controls (zoom and pan)."""
         self.toolbar.addWidget(SpacerWidget())
-        self.add_plot_controls()
+        self._add_plot_controls()
         self.toolbar.addWidget(SpacerWidget())
 
-    @QtCore.pyqtSlot()
+    # @QtCore.pyqtSlot()
     def select_file(self):
+        """Brings up a file dialog to pick a file."""
         file_dir = os.path.expanduser('~')
         self.file_path, _ = QFileDialog.getOpenFileName(
                                 self, "Select Files", file_dir,
                                 "activpal data (*.dat, *.datx)")
 
-    def setup_window(self):
+    def _setup_window(self):
+        """Setup window and plot canvas."""
         self.FilePlot = UIFilePlot(parent=self)
         self.setWindowTitle("Raw activPAL Data Viewer")
         self.setCentralWidget(self.FilePlot)
 
     def run_main(self):
+        """Fetch a data file and plot it."""
         self.FilePlot.load_data(self.file_path)
         self.FilePlot.new_plot()
 
 
 class UIFilePlot(QWidget):
+    """
+    A QWidget which displays activPAL raw data (x, y, z and rss).
+
+    """
+
     def __init__(self, parent=None, file_path=None, center=None, width=None):
+        """Creates a UIFilePlot widget."""
         super(UIFilePlot, self).__init__(parent)
         self.file_path = file_path
 
         main_layout = QVBoxLayout()
-        self.create_canvas()
+        self._create_canvas()
         main_layout.addWidget(self.canvas)
-        self.canvas.mpl_connect('key_press_event', self.key_press)
+        self.canvas.mpl_connect('key_press_event', self._key_press)
         self.setLayout(main_layout)
         self.setMinimumHeight(500)
         self.setMinimumWidth(500)
         if self.file_path is not None:
             self.load_data()
 
-    def create_canvas(self):
+    def _create_canvas(self):
+        """Creates the plot canvas."""
         self.fig = Figure(dpi=100, facecolor='none', frameon=False)
         self.canvas = FigureCanvas(self.fig)
         gs = GridSpec(3, 1, height_ratios=[3.5, 6, 0.5],
@@ -123,12 +149,31 @@ class UIFilePlot(QWidget):
         self.canvas.draw()
 
     def load_data(self, file_path=None):
+        """
+        Load the given data file.
+
+        Parameters
+        ----------
+        file_path : str
+            The path to a raw activPAL data file.
+
+        """
         if file_path is not None:
             self.file_path = file_path
         self.data = ActivpalData(self.file_path)
 
     def new_plot(self, center=None, width=None):
-        # import ipdb; ipdb.set_trace()
+        """
+        Create a fresh plot from the loaded file.
+
+        Parameters
+        ----------
+        center : float
+            The point the plot should be horizontally centered around.
+        width : float
+            The width of the plot (range of the x axis).
+
+        """
         self.clear_plot()
         if center is None and width is not None:
             # Set center
@@ -149,34 +194,48 @@ class UIFilePlot(QWidget):
                           color='tab:blue')
         self.axes[1].plot(self.data.signals.index,
                           self.data.signals[['x', 'y', 'z']], alpha=0.6)
-        self.set_xticks()
+        self._set_xticks()
         self.canvas.draw()
 
-    def set_xticks(self):
+    def _set_xticks(self):
+        """Set the format and location of the plots xticks."""
         loc = mdates.AutoDateLocator(minticks=3, maxticks=7)
         datetimefmt = mdates.AutoDateFormatter(loc)
         self.axes[0].xaxis.set_major_formatter(datetimefmt)
         self.axes[0].xaxis.set_major_locator(loc)
 
     def clear_plot(self):
+        """Clear lines from the plot."""
         for i in range(len(self.axes)):
             lines = self.axes[i].get_lines()
             for j in range(len(lines)):
                 lines.pop(0).remove()
         self.canvas.draw()
 
-    def key_press(self, event):
+    def _key_press(self, event):
+        """Respond to key presses."""
         zoom_keys = {'up', 'down', 'shift+up', 'shift+down'}
         pan_keys = {'left', 'right', 'shift+left', 'shift+right'}
         if event.key in zoom_keys:
-            self.keyboard_zoom(event)
+            self._keyboard_zoom(event)
         elif event.key in pan_keys:
-            self.keyboard_pan(event)
+            self._keyboard_pan(event)
         # else:
         #     # Debug code
         #     print(event.key)
 
     def basic_zoom(self, scale_factor=2, xhold=None):
+        """
+        Zoom in on the plot (horizontally).
+
+        Parameters
+        ----------
+        scale_factor : int
+            The path to a raw activPAL data file.
+        xhold :
+            The x axis value to hold static.
+
+        """
         ax = self.axes[0]
         cur_xlim = ax.get_xlim()
         cur_xrange = (cur_xlim[1] - cur_xlim[0])
@@ -199,7 +258,8 @@ class UIFilePlot(QWidget):
             ax.set_xlim(new_xlim)
             self.canvas.draw()
 
-    def keyboard_zoom(self, event):
+    def _keyboard_zoom(self, event):
+        """Control zoom using keyboard up and down arrow keys."""
         if event.inaxes is not None:
             xdata = event.xdata
         else:
@@ -227,6 +287,15 @@ class UIFilePlot(QWidget):
         self.basic_zoom(scale_factor=scale_factor, xhold=xdata)
 
     def basic_pan(self, move_factor=0):
+        """
+        Pan the plot (horizontally).
+
+        Parameters
+        ----------
+        move_factor : float
+            Decimal fraction which controls how far to jump left (-) or right (+).
+
+        """
         ax = self.axes[0]
         cur_xlim = ax.get_xlim()
         cur_xrange = (cur_xlim[1] - cur_xlim[0])
@@ -240,7 +309,8 @@ class UIFilePlot(QWidget):
             ax.set_xlim(new_xlim)
             self.canvas.draw()
 
-    def keyboard_pan(self, event):
+    def _keyboard_pan(self, event):
+        """Control pan using keyboard left and right arrow keys."""
         base_scale = 0.5
         if event.key == 'left':
             # deal with zoom in

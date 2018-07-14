@@ -23,7 +23,21 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 
 
 class BaseMainWindow(QMainWindow):
+    """
+    A QMainWindow subclass which includes additional setup, mainly styling.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a BaseMainWindow.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(BaseMainWindow, self).__init__(parent)
         self.resources = '/'.join([os.path.dirname(__file__), 'resources'])
         self.setGeometry(*self.base_geometry)
@@ -108,15 +122,35 @@ class BaseMainWindow(QMainWindow):
 
     @property
     def base_geometry(self):
+        """(left, top, width, height) : The default window geometry"""
         return 0, 0, 1000, 700
 
 
 class BaseSubWindow(BaseMainWindow):
+    """
+    A BaseMainWindow subclass desiged for creating additional windows.
+
+    See Also
+    --------
+    BaseDialog : A QDialog subclass which includes additional setup, mainly styling.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a BaseSubWindow.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(BaseSubWindow, self).__init__(parent)
         self.statusBar().hide()
 
-    def setup_basic_toolbar(self):
+    def _setup_basic_toolbar(self):
+        """Setup two buttons on the toolbar."""
         self.buttonleft = QAction('No', self)
         self.buttonleft.triggered.connect(self.left_button_action)
         self.toolbar.addAction(self.buttonleft)
@@ -125,30 +159,67 @@ class BaseSubWindow(BaseMainWindow):
         self.buttonright.triggered.connect(self.right_button_action)
         self.toolbar.addAction(self.buttonright)
 
-    def setup_one_button_toolbar(self):
+    def _setup_one_button_toolbar(self):
+        """Setup one button on the toolbar."""
         self.toolbar.addWidget(SpacerWidget())
         self.buttonright = QAction('OK', self)
         self.buttonright.triggered.connect(self.right_button_action)
         self.toolbar.addAction(self.buttonright)
 
     def left_button_action(self):
+        """
+        The function called when the left button is pressed.
+
+        The default is to do nothing. This method should be redefined when
+        subclassing.
+
+        """
         pass
 
     def right_button_action(self):
+        """
+        The function called when the right button is pressed.
+
+        The default is to do nothing. This method should be redefined when
+        subclassing.
+
+        """
         pass
 
     def closeEvent(self, *args, **kwargs):
+        """Close the window."""
         super(QMainWindow, self).closeEvent(*args, **kwargs)
         if hasattr(self, 'launch_on_close') and callable(self.launch_on_close):
             self.launch_on_close()
 
     @property
     def base_geometry(self):
+        """(left, top, width, height) : The default window geometry"""
         return 0, 0, 400, 200
 
 
 class BaseDialog(QDialog):
+    """
+    A QDialog subclass which includes additional setup, mainly styling.
+
+    See Also
+    --------
+    BaseMessageDialog : A BaseDialog subclass desiged for displaying messages.
+    BaseQuestionDialog : A BaseDialog subclass desiged for asking binary
+        (yes | no) questions.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a BaseDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(BaseDialog, self).__init__(parent)
         # Setup
         self.resources = '/'.join([os.path.dirname(__file__), 'resources'])
@@ -167,15 +238,15 @@ class BaseDialog(QDialog):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        self.setup_controlbar()
-        # self.setup_one_button_toolbar()
+        self._setup_controlbar()
+        # self._setup_one_button_toolbar()
         layout.addWidget(self.controlbar)
-        self.setup_main_space()
+        self._setup_main_space()
         layout.addWidget(self.main_space)
         self.setLayout(layout)
         # Uncomment one of the below for testing only
-        # self.setup_one_button_toolbar()
-        # self.setup_two_button_toolbar()
+        # self._setup_one_button_toolbar()
+        # self._setup_two_button_toolbar()
 
     def centerOnScreen(self):
         """Centers the window on the screen."""
@@ -183,7 +254,8 @@ class BaseDialog(QDialog):
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
-    def setup_controlbar(self):
+    def _setup_controlbar(self):
+        """Sets up the top bar which contains the buttons."""
         self.controlbar = QWidget()
         controlbarstyle = """
             .QWidget{{
@@ -220,13 +292,15 @@ class BaseDialog(QDialog):
         # Method Redirects
         self.controlbar.addWidget = self.controlbar_addWidget
 
-    def setup_one_button_toolbar(self):
+    def _setup_one_button_toolbar(self):
+        """Setup one button on the controlbar."""
         self.buttonright = QPushButton('OK', self)
         self.buttonright.clicked.connect(self.right_button_action)
         self.controlbar.addWidget(SpacerWidget())
         self.controlbar.addWidget(self.buttonright)
 
-    def setup_two_button_toolbar(self):
+    def _setup_two_button_toolbar(self):
+        """Setup two buttons on the controlbar."""
         self.buttonleft = QPushButton('No', self)
         self.buttonleft.clicked.connect(self.left_button_action)
         self.controlbar.addWidget(self.buttonleft)
@@ -236,12 +310,21 @@ class BaseDialog(QDialog):
         self.controlbar.addWidget(self.buttonright)
 
     def left_button_action(self):
+        """
+        The function called when the left button is pressed. The default is reject().
+
+        """
         self.reject()
 
     def right_button_action(self):
+        """
+        The function called when the right button is pressed. The default is accept().
+
+        """
         self.accept()
 
-    def setup_main_space(self):
+    def _setup_main_space(self):
+        """ """
         self.main_space = SpacerWidget()
         self.main_space_layout = QVBoxLayout()
         self.main_space.setLayout(self.main_space_layout)
@@ -249,20 +332,45 @@ class BaseDialog(QDialog):
         self.addWidget = self.main_space_addWidget
 
     def controlbar_addWidget(self, widget):
+        """Add a widget to the controlbar."""
         self.controlbar_layout.addWidget(widget)
 
     def main_space_addWidget(self, widget):
+        """Add a widget to the main space."""
         self.main_space_layout.addWidget(widget)
 
     @property
     def base_geometry(self):
+        """(left, top, width, height) : The default window geometry"""
         return 0, 0, 400, 200
 
 
 class BaseMessageDialog(BaseDialog):
+    """
+    A BaseDialog subclass desiged for displaying messages.
+
+    See Also
+    --------
+    BaseDialog : A QDialog subclass which includes additional setup, mainly styling.
+    BaseQuestionDialog : A BaseDialog subclass desiged for asking binary
+        (yes | no) questions.
+
+    """
+
     def __init__(self, parent=None, msg=None):
+        """
+        Create an instance of a BaseMessageDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+        msg : str
+            The message to display.
+
+        """
         super(BaseMessageDialog, self).__init__(parent)
-        self.setup_one_button_toolbar()
+        self._setup_one_button_toolbar()
         if msg is not None:
             self.msg = QLabel(msg)
         else:
@@ -271,13 +379,35 @@ class BaseMessageDialog(BaseDialog):
         self.main_space_addWidget(self.msg)
 
     def set_message(self, msg):
+        """Set the message displayed by the dialog."""
         self.msg.setText(msg)
 
 
 class BaseQuestionDialog(BaseDialog):
+    """
+    A BaseDialog subclass desiged for asking binary (yes | no) questions.
+
+    See Also
+    --------
+    BaseDialog : A QDialog subclass which includes additional setup, mainly styling.
+    BaseMessageDialog : A BaseDialog subclass desiged for displaying messages.
+
+    """
+
     def __init__(self, parent=None, question=None):
+        """
+        Create an instance of a BaseQuestionDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+        question : str
+            The question to display.
+
+        """
         super(BaseQuestionDialog, self).__init__(parent)
-        self.setup_two_button_toolbar()
+        self._setup_two_button_toolbar()
         if question is not None:
             self.question = QLabel(question)
         else:
@@ -286,17 +416,33 @@ class BaseQuestionDialog(BaseDialog):
         self.main_space_addWidget(self.question)
 
     def set_question(self, question):
+        """Set the question displayed by the dialog."""
         self.question.setText(question)
 
 
 class SpacerWidget(QWidget):
+    """
+    A Qwidget which fills horizontal and vertical space.
+
+    Most useful for aligning other widgets, a spacer either side will center,
+    a spacer on the left will align right, a spacer on the right will align left.
+
+    """
+
     def __init__(self, parent=None):
+        """Create a SpacerWidget."""
         super(SpacerWidget, self).__init__(parent)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 
 class QuestionResponse(QWidget):
+    """
+    A combo widget designed to put a question and textbox on one line.
+
+    """
+
     def __init__(self, parent=None):
+        """Create a QuestionResponse widget."""
         super(QuestionResponse, self).__init__(parent)
         widget_layout = self.layout
         self.question = QLabel('')
@@ -307,16 +453,24 @@ class QuestionResponse(QWidget):
 
     @property
     def layout(self):
+        """The QLayout used to organise the question and response."""
         return QHBoxLayout()
 
 
 class VQuestionResponse(QuestionResponse):
+    """
+    A combo widget designed to stack a question on top of a textbox.
+
+    """
+
     def __init__(self, parent=None):
+        """Create a VQuestionResponse widget."""
         super(VQuestionResponse, self).__init__(parent)
         self.question.setAlignment(QtCore.Qt.AlignCenter)
 
     @property
     def layout(self):
+        """The QLayout used to organise the question and response."""
         return QVBoxLayout()
 
 

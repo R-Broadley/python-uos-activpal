@@ -23,24 +23,43 @@ from .raw_viewer import MainWindow as BasePlotWindow
 
 # This is a subclass of raw_viewer.MainWindow (imported as BasePlotWindow)
 class MainWindow(BasePlotWindow):
+    """
+    A raw_viewer.MainWindow subclass which adds the ability to mark points.
+
+    """
+
     def __init__(self, parent=None, request_confidence=True):
+        """
+        Create an instance of a MainWindow.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+        request_confidence : bool
+            Sets whether a dialog will appear, when the save button is pressed,\
+                which requests the confidence the correct point has been marked.
+
+        """
         super(MainWindow, self).__init__(parent)
         self.request_confidence = request_confidence
 
-    def setup_toolbar(self):
+    def _setup_toolbar(self):
+        """Add Save button, plot controls and Mark button to toolbar."""
         saveAct = QAction('Save', self)
         saveAct.setShortcut('Ctrl+S')
         saveAct.triggered.connect(self.save_button_action)
         self.toolbar.addAction(saveAct)
         self.toolbar.addWidget(SpacerWidget())
-        self.add_plot_controls()
+        self._add_plot_controls()
         self.toolbar.addWidget(SpacerWidget())
         self.markbtn = QPushButton('Mark')
         self.markbtn.setCheckable(True)
-        self.markbtn.clicked[bool].connect(self.toggle_fall_marking)
+        self.markbtn.clicked[bool].connect(self.toggle_plot_marking)
         self.toolbar.addWidget(self.markbtn)
 
-    def toggle_fall_marking(self):
+    def toggle_plot_marking(self):
+        """Activate / Deactivate the plot marking feature."""
         if self.markbtn.isChecked():
             self.FilePlot.mark_active = True
             self.statusBar().showMessage('Marker Active')
@@ -48,13 +67,15 @@ class MainWindow(BasePlotWindow):
             self.FilePlot.mark_active = False
             self.statusBar().showMessage('Ready')
 
-    def setup_window(self):
+    def _setup_window(self):
+        """Setup window and plot canvas."""
         self.FilePlot = UIFileMarkingPlot(parent=self)
         self.setWindowTitle("Raw activPAL Data Marker")
         self.setCentralWidget(self.FilePlot)
 
-    @QtCore.pyqtSlot()
+    # @QtCore.pyqtSlot()
     def save_button_action(self):
+        """Run pre-save actions then save."""
         # TODO check point has been marked
         if self.request_confidence:
             confidence_dialog = ConfidenceDialog(parent=self)
@@ -77,18 +98,21 @@ class MainWindow(BasePlotWindow):
             else:
                 self.close()
 
-    @QtCore.pyqtSlot()
+    # @QtCore.pyqtSlot()
     def clear_markers(self):
+        """Clear all placed markers."""
         self.FilePlot.clear_markers()
 
-    @QtCore.pyqtSlot()
+    # @QtCore.pyqtSlot()
     def load_new(self):
+        """Fetch new file, load the data and plot."""
         self.clear_markers()
         self.select_file()
         self.run_main()
 
-    @QtCore.pyqtSlot()
+    # @QtCore.pyqtSlot()
     def save(self):
+        """Save marked points sample number, datetime, (and confidence) to csv file."""
         file_dir = os.path.expanduser('~')
         save_file_path, _ = QFileDialog.getSaveFileName(
                                 self, "Select Save File",
@@ -124,14 +148,33 @@ class MainWindow(BasePlotWindow):
 
 
 class UIFileMarkingPlot(UIFilePlot):
+    """
+    A QWidget which displays, and allow marking of, activPAL raw data (x, y, z and rss).
+
+    """
+
     def __init__(self, parent=None, file_path=None, center=None, width=None):
-        """center is point (datetime) to center in the plot
-            width is the number of days which should be shown"""
+        """
+        Creates a UIFileMarkingPlot widget.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+        file_path : str
+            The path of the file to plot.
+        center : float
+            The point the plot should be horizontally centered around.
+        width : float | int
+            The width of the plot (range of the x axis) in days.
+
+        """
         super(UIFileMarkingPlot, self).__init__(parent, file_path)
         # Interaction
-        self.canvas.mpl_connect('button_press_event', self.on_click)
+        self.canvas.mpl_connect('button_press_event', self._on_click)
 
-    def on_click(self, event):
+    def _on_click(self, event):
+        """."""
         try:
             self.mark_active
         except AttributeError:
@@ -154,16 +197,43 @@ class UIFileMarkingPlot(UIFilePlot):
             self.canvas.draw()
 
     def create_marker(self, xdata, linecolor='k'):
+        """
+        Create a marker line on the plot.
+
+        Parameters
+        ----------
+        xdata :
+            The point (x axis) where the marker should be.
+        linecolor : str
+            The code for the desired line color.
+
+        """
         marker = []
         lineproperties = {'color': linecolor, 'alpha': 1, 'linestyle': ':'}
         for i in range(3):
             ydata = self.axes[i].get_ylim()
             marker.append(self.axes[i].plot(
                 [xdata, xdata], ydata, **lineproperties)[0])
-            self.set_xticks()
+            self._set_xticks()
         return marker
 
     def update_marker(self, marker, xdata):
+        """
+        Update the location of the given marker.
+
+        Parameters
+        ----------
+        marker :
+            The marker which should be updated.
+        xdata :
+            The point (x axis) where the marker should be.
+
+        Returns
+        -------
+        marker:
+            The marker (set of lines) which has been updated.
+
+        """
         if not marker == []:
             for m in marker:
                 m.set_xdata([xdata, xdata])
@@ -172,6 +242,7 @@ class UIFileMarkingPlot(UIFilePlot):
             raise AttributeError  # Marker does not exist
 
     def clear_markers(self):
+        """Clear all stored markers."""
         if hasattr(self, 'marker'):
             for i in range(len(self.marker)):
                 self.marker.pop(0).remove()
@@ -180,6 +251,22 @@ class UIFileMarkingPlot(UIFilePlot):
         self.canvas.draw()
 
     def get_nearest_peak(self, input_array, sample_number):
+        """
+        Find the peak in the given array nearest the given samle number.
+
+        Parameters
+        ----------
+        input_array : numpy.ndarray
+            The array which should be searched for the nearest peak.
+        sample_number : int
+            The index of the point from which the nearest peak should be found.
+
+        Returns
+        -------
+        sample_number:
+            The sample number of the nearest peak.
+
+        """
         zone_width = 1200
         zone_start = sample_number - zone_width
         if zone_start < 0:
@@ -198,7 +285,30 @@ class UIFileMarkingPlot(UIFilePlot):
 
 
 class ConfidenceDialog(BaseQuestionDialog):
+    """
+    A BaseQuestionDialog to request a confidence rating from the user.
+
+    See Also
+    --------
+    uos_activpal.gui.base.BaseDialog : A QDialog subclass which includes
+        additional setup, mainly styling.
+    uos_activpal.gui.base.BaseMessageDialog : A BaseDialog subclass desiged
+        for displaying messages.
+    uos_activpal.gui.base.BaseQuestionDialog : A BaseDialog subclass desiged
+        for asking binary (yes | no) questions.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a ConfidenceDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(ConfidenceDialog, self).__init__(parent)
         self.setWindowTitle("Set Confidence")
         self.buttonleft.setText('Return')
@@ -209,25 +319,78 @@ class ConfidenceDialog(BaseQuestionDialog):
         self.main_space_addWidget(self.confidence_slider)
 
     def get_confidence(self):
+        """Get the current confidence rating."""
         return self.confidence_slider.get_slider_value()
 
 
 class AnotherPointDialog(BaseQuestionDialog):
+    """
+    A BaseQuestionDialog to ask if the user wants to mark another point in this file.
+
+    See Also
+    --------
+    uos_activpal.gui.base.BaseDialog : A QDialog subclass which includes
+        additional setup, mainly styling.
+    uos_activpal.gui.base.BaseMessageDialog : A BaseDialog subclass desiged
+        for displaying messages.
+    uos_activpal.gui.base.BaseQuestionDialog : A BaseDialog subclass desiged
+        for asking binary (yes | no) questions.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a AnotherPointDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(AnotherPointDialog, self).__init__(parent)
         self.setWindowTitle("Mark Another Point?")
         self.set_question('Do you want to mark another point in this file?')
 
 
 class AnotherFileDialog(BaseQuestionDialog):
+    """
+    A BaseQuestionDialog to ask if the user wants to mark another point in another file.
+
+    See Also
+    --------
+    uos_activpal.gui.base.BaseDialog : A QDialog subclass which includes
+        additional setup, mainly styling.
+    uos_activpal.gui.base.BaseMessageDialog : A BaseDialog subclass desiged
+        for displaying messages.
+    uos_activpal.gui.base.BaseQuestionDialog : A BaseDialog subclass desiged
+        for asking binary (yes | no) questions.
+
+    """
+
     def __init__(self, parent=None):
+        """
+        Create an instance of a AnotherPointDialog.
+
+        Parameters
+        ----------
+        parent : object
+            The parent object.
+
+        """
         super(AnotherFileDialog, self).__init__(parent)
         self.setWindowTitle("Mark Another File?")
         self.set_question('Do you want to mark a point in another file?')
 
 
 class ConfidenceSlider(QWidget):
+    """
+    A Qwidget which contains a 1 to 10 slider and the label 'Confidence:'.
+
+    """
+
     def __init__(self, parent=None):
+        """Create a ConfidenceSlider widget."""
         super(ConfidenceSlider, self).__init__(parent)
         # Slider Widget
         self.slider = QSlider(QtCore.Qt.Horizontal)
@@ -241,8 +404,8 @@ class ConfidenceSlider(QWidget):
         self.confidencelabel = QLabel('1 / 10')
         self.confidencelabel.setAlignment(QtCore.Qt.AlignRight)
         self.confidencelabel.setMinimumWidth(20)
-        self.slider_move()
-        self.slider.valueChanged.connect(self.slider_move)
+        self._slider_move()
+        self.slider.valueChanged.connect(self._slider_move)
         # Layout
         self.setMaximumWidth(400)
         self.setMaximumHeight(200)
@@ -254,11 +417,13 @@ class ConfidenceSlider(QWidget):
         self_layout.addWidget(self.slider)
         self.setLayout(self_layout)
 
-    def slider_move(self):
+    def _slider_move(self):
+        """Function called when the slider is moved (Updates the value label)."""
         self.confidence = self.slider.value()
         self.confidencelabel.setText(str(self.confidence))
 
     def get_slider_value(self):
+        """Returns the current value of the slider."""
         return self.slider.value()
 
 
