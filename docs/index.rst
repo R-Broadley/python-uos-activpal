@@ -8,13 +8,12 @@ Welcome to uos activpal's documentation!
 
 .. toctree::
     :maxdepth: 2
-
-    modules
+    
+    uos_activpal
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
