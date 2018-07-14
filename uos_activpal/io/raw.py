@@ -340,7 +340,7 @@ class ActivpalData(object):
 
     @property
     def data(self):
-        # For backwards compatibility
+        """pandas.DataFrame : Depricated - use signals."""
         warning('activpal_data.data is depricated use activpal_data.signals')
         return self.signals
 
@@ -375,7 +375,7 @@ class ActivpalData(object):
 
     @property
     def rss(self):
-        """pandas.Series : The Root Sum of Squares of from the x, y, z axes."""
+        """pandas.Series : The Root Sum of Squares of the x, y, z axes."""
         if 'rss' not in self._signals.columns:
             sqr = np.square(self._signals[['x', 'y', 'z']])
             sumsqr = np.sum(sqr, axis=1)
