@@ -299,13 +299,6 @@ class ActivpalData(object):
     """
     An object to wrap activPAL data.
 
-    Attributes
-    ----------
-    metadata : namedtuple
-        The information extracted from the files header.
-    signals : pandas.DataFrame
-        A DataFrame where each column contains data from the recording.
-
     Methods
     -------
     TODO
@@ -328,12 +321,22 @@ class ActivpalData(object):
 
         """
         data = load_activpal_data(file_path)
-        self.metadata = data[0]
+        self._metadata = data[0]
         data_g = (np.array(data[1], dtype=np.float64, order='F') - 127) / 63
         interval = pd.tseries.offsets.Milli() * (1000 / data[0].hz)
         ind = pd.date_range(data[0].start_datetime, periods=len(data[1]),
                             freq=interval)
-        self.signals = pd.DataFrame(data_g, columns=['x', 'y', 'z'], index=ind)
+        self._signals = pd.DataFrame(data_g, columns=['x', 'y', 'z'], index=ind)
+
+    @property
+    def metadata(self):
+        """namedtuple : The information extracted from the files header."""
+        return self._metadata
+
+    @property
+    def signals(self):
+        """pandas.DataFrame : The sensor signals."""
+        return self._signals.copy()
 
     @property
     def data(self):
@@ -349,32 +352,32 @@ class ActivpalData(object):
     @property
     def x(self):
         """pandas.Series : The signal from the x axis."""
-        if 'x' not in self.signals.columns:
+        if 'x' not in self._signals.columns:
             raise AttributeError('activpal_data property X no longer exists.\
                                  The signals must have been interfered with.')
-        return self.signals['x']
+        return self._signals['x'].copy()
 
     @property
     def y(self):
         """pandas.Series : The signal from the y axis."""
-        if 'y' not in self.signals.columns:
+        if 'y' not in self._signals.columns:
             raise AttributeError('activpal_data property Y no longer exists.\
                                  The signals must have been interfered with.')
-        return self.signals['y']
+        return self._signals['y'].copy()
 
     @property
     def z(self):
         """pandas.Series : The signal from the z axis."""
-        if 'z' not in self.signals.columns:
+        if 'z' not in self._signals.columns:
             raise AttributeError('activpal_data property Z no longer exists.\
                                  The signals must have been interfered with.')
-        return self.signals['z']
+        return self._signals['z'].copy()
 
     @property
     def rss(self):
         """pandas.Series : The Root Sum of Squares of from the x, y, z axes."""
-        if 'rss' not in self.signals.columns:
-            sqr = np.square(self.signals[['x', 'y', 'z']])
+        if 'rss' not in self._signals.columns:
+            sqr = np.square(self._signals[['x', 'y', 'z']])
             sumsqr = np.sum(sqr, axis=1)
-            self.signals['rss'] = np.sqrt(sumsqr)
-        return self.signals['rss']
+            self._signals['rss'] = np.sqrt(sumsqr)
+        return self._signals['rss'].copy()
