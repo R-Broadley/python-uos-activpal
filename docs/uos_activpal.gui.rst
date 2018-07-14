@@ -1,5 +1,5 @@
-uos\_activpal.gui package
-=========================
+uos\_activpal.gui
+=================
 
 
 uos\_activpal.gui.base module
