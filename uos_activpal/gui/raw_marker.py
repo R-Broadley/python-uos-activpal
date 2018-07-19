@@ -406,6 +406,8 @@ class ConfidenceSlider(QWidget):
         self.confidencelabel.setMinimumWidth(20)
         self._slider_move()
         self.slider.valueChanged.connect(self._slider_move)
+        # Lazy redefine slider mouse press event
+        self.slider.mousePressEvent = self._slider_click
         # Layout
         self.setMaximumWidth(400)
         self.setMaximumHeight(200)
@@ -425,6 +427,13 @@ class ConfidenceSlider(QWidget):
     def get_slider_value(self):
         """Returns the current value of the slider."""
         return self.slider.value()
+
+    def _slider_click(self, event):
+        maximum = self.slider.maximum()
+        width = self.slider.width()
+        point = event.pos().x()
+        new_val = np.round((point / width) * 10)
+        self.slider.setValue(new_val)
 
 
 if __name__ == '__main__':
