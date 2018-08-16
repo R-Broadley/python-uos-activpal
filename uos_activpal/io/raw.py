@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-"""
-This module contains tools for working with activPAL raw data files.
-"""
+"""This module contains tools for working with activPAL raw data files."""
 
 # Created on 06 Dec 2016
 # @author: R-Broadley
 
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, time
 import os
 import errno
 import numpy as np
 import pandas as pd
 from numba import jit
+from .events import ActivpalEvents
 
 
 _Meta = namedtuple('Meta', [
@@ -42,12 +41,13 @@ class Meta(_Meta):
     device_id : int
 
     """
+
     __slots__ = ()
 
 
 def change_file_code(file_path, new_code):
     """
-    Modifies the file code in the header of an activPAL raw data file.
+    Modifiy the file code in the header of an activPAL raw data file.
 
     Parameters
     ----------
@@ -75,7 +75,7 @@ def change_file_code(file_path, new_code):
 
 def extract_metadata_from_file(file_path):
     """
-    Returns a Meta object with the metadata from the given activPAL data file.
+    Return a Meta object with the metadata from the given activPAL data file.
 
     Parameters
     ----------
@@ -102,7 +102,7 @@ def extract_metadata_from_file(file_path):
 
 def extract_metadata(header):
     """
-    Returns a Meta object with the metadata from the given uint8 array.
+    Return a Meta object with the metadata from the given uint8 array.
 
     Parameters
     ----------
@@ -180,7 +180,7 @@ def _old_tail_check(x):
 @jit
 def extract_accelerometer_data(body, firmware, datx):
     """
-    Returns a numpyndarray with the signals from the given uint8 array.
+    Return a numpyndarray with the signals from the given uint8 array.
 
     Parameters
     ----------
@@ -257,7 +257,7 @@ def extract_accelerometer_data(body, firmware, datx):
 
 def load_activpal_data(file_path):
     """
-    Returns the data from an activPAL data file as (metadata, signals).
+    Return the data from an activPAL data file as (metadata, signals).
 
     Parameters
     ----------

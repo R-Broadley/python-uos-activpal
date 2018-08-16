@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-A GUI application to view the raw activPAL accelerometer data.
+"""A GUI application to view the raw activPAL accelerometer data."""
 
-Created on 21 Jun 2017
-
-@author: R-Broadley
-"""
+# Created on 21 Jun 2017
+#
+# @author: R-Broadley
 
 import sys
 import os
@@ -14,7 +12,7 @@ import numpy as np
 import matplotlib.dates as mdates
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QFileDialog, QWidget, QPushButton, QLabel, QSlider,
-                             QAction, QHBoxLayout, qApp)
+                             QAction, QHBoxLayout)
 from scipy.signal import argrelmax
 from .base import BaseQuestionDialog, SpacerWidget
 from .raw_viewer import UIFilePlot
@@ -23,10 +21,7 @@ from .raw_viewer import MainWindow as BasePlotWindow
 
 # This is a subclass of raw_viewer.MainWindow (imported as BasePlotWindow)
 class MainWindow(BasePlotWindow):
-    """
-    A raw_viewer.MainWindow subclass which adds the ability to mark points.
-
-    """
+    """A raw_viewer.MainWindow subclass which adds the ability to mark points."""
 
     def __init__(self, parent=None, request_confidence=True):
         """
@@ -37,7 +32,7 @@ class MainWindow(BasePlotWindow):
         parent : object
             The parent object.
         request_confidence : bool
-            Sets whether a dialog will appear, when the save button is pressed,\
+            Sets whether a dialog will appear, when the save button is pressed,
                 which requests the confidence the correct point has been marked.
 
         """
@@ -68,7 +63,7 @@ class MainWindow(BasePlotWindow):
             self.statusBar().showMessage('Ready')
 
     def _setup_window(self):
-        """Setup window and plot canvas."""
+        """Set up window and plot canvas."""
         self.FilePlot = UIFileMarkingPlot(parent=self)
         self.setWindowTitle("Raw activPAL Data Marker")
         self.setCentralWidget(self.FilePlot)
@@ -149,13 +144,15 @@ class MainWindow(BasePlotWindow):
 
 class UIFileMarkingPlot(UIFilePlot):
     """
-    A QWidget which displays, and allow marking of, activPAL raw data (x, y, z and rss).
+    A QWidget which displays, and allow marking of, activPAL raw data.
+
+    Displays x, y, z and rss.
 
     """
 
     def __init__(self, parent=None, file_path=None, center=None, width=None):
         """
-        Creates a UIFileMarkingPlot widget.
+        Create a UIFileMarkingPlot widget.
 
         Parameters
         ----------
@@ -384,10 +381,7 @@ class AnotherFileDialog(BaseQuestionDialog):
 
 
 class ConfidenceSlider(QWidget):
-    """
-    A Qwidget which contains a 1 to 10 slider and the label 'Confidence:'.
-
-    """
+    """A Qwidget which contains a 1 to 10 slider and the label 'Confidence:'."""
 
     def __init__(self, parent=None):
         """Create a ConfidenceSlider widget."""
@@ -420,12 +414,12 @@ class ConfidenceSlider(QWidget):
         self.setLayout(self_layout)
 
     def _slider_move(self):
-        """Function called when the slider is moved (Updates the value label)."""
+        """Define the action when the slider is moved (Updates the value label)."""
         self.confidence = self.slider.value()
         self.confidencelabel.setText(str(self.confidence))
 
     def get_slider_value(self):
-        """Returns the current value of the slider."""
+        """Return the current value of the slider."""
         return self.slider.value()
 
     def _slider_click(self, event):

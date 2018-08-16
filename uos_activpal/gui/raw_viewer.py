@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-A GUI application to view the raw activPAL accelerometer data.
+"""A GUI application to view the raw activPAL accelerometer data."""
 
-Created on 21 Jun 2017
-
-@author: R-Broadley
-"""
+# Created on 21 Jun 2017
+#
+# @author: R-Broadley
 
 import sys
 import os
@@ -23,10 +21,7 @@ from ..io.raw import ActivpalData
 
 
 class MainWindow(BaseMainWindow):
-    """
-    A BaseMainWindow subclass which displays a plot of raw activPAL data.
-
-    """
+    """A BaseMainWindow subclass which displays a plot of raw activPAL data."""
 
     def __init__(self, parent=None):
         """
@@ -77,21 +72,21 @@ class MainWindow(BaseMainWindow):
         self.toolbar.addAction(panrAct)
 
     def _setup_toolbar(self):
-        """Setup toolbar with plot controls (zoom and pan)."""
+        """Set up toolbar with plot controls (zoom and pan)."""
         self.toolbar.addWidget(SpacerWidget())
         self._add_plot_controls()
         self.toolbar.addWidget(SpacerWidget())
 
     # @QtCore.pyqtSlot()
     def select_file(self):
-        """Brings up a file dialog to pick a file."""
+        """Bring up a file dialog to pick a file."""
         file_dir = os.path.expanduser('~')
         self.file_path, _ = QFileDialog.getOpenFileName(
                                 self, "Select Files", file_dir,
                                 "activpal data (*.dat, *.datx)")
 
     def _setup_window(self):
-        """Setup window and plot canvas."""
+        """Set up window and plot canvas."""
         self.FilePlot = UIFilePlot(parent=self)
         self.setWindowTitle("Raw activPAL Data Viewer")
         self.setCentralWidget(self.FilePlot)
@@ -103,13 +98,10 @@ class MainWindow(BaseMainWindow):
 
 
 class UIFilePlot(QWidget):
-    """
-    A QWidget which displays activPAL raw data (x, y, z and rss).
-
-    """
+    """A QWidget which displays activPAL raw data (x, y, z and rss)."""
 
     def __init__(self, parent=None, file_path=None, center=None, width=None):
-        """Creates a UIFilePlot widget."""
+        """Create a UIFilePlot widget."""
         super(UIFilePlot, self).__init__(parent)
         self.file_path = file_path
 
@@ -124,7 +116,7 @@ class UIFilePlot(QWidget):
             self.load_data()
 
     def _create_canvas(self):
-        """Creates the plot canvas."""
+        """Create the plot canvas."""
         self.fig = Figure(dpi=100, facecolor='none', frameon=False)
         self.canvas = FigureCanvas(self.fig)
         gs = GridSpec(3, 1, height_ratios=[3.5, 6, 0.5],
@@ -266,10 +258,7 @@ class UIFilePlot(QWidget):
         else:
             # basic_zoom will hold center of the xaxis if xhold/xdata is None
             xdata = None
-        ax = self.axes[0]
         base_scale = 2
-        cur_xlim = ax.get_xlim()
-        cur_xrange = (cur_xlim[1] - cur_xlim[0])
         if event.key == 'up':
             # deal with zoom in
             scale_factor = 1/base_scale

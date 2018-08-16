@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 21 2017
+"""Base classes for creating GUI applications with a standard theme."""
 
-@author: R-Broadley
-"""
+# Created on Thu Jun 21 2017
+#
+# @author: R-Broadley
 
 import sys
 import os
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QWidget,
-                             QDesktopWidget, QToolBar, QAction, QLabel,
+                             QDesktopWidget, QAction, QLabel,
                              QPushButton, QLineEdit, QSizePolicy,
-                             QHBoxLayout, QVBoxLayout, qApp)
+                             QHBoxLayout, QVBoxLayout)
 
 # Enable High DPI Scaling
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -122,7 +122,7 @@ class BaseMainWindow(QMainWindow):
 
     @property
     def base_geometry(self):
-        """(left, top, width, height) : The default window geometry"""
+        """(left, top, width, height) : The default window geometry."""
         return 0, 0, 1000, 700
 
 
@@ -150,7 +150,7 @@ class BaseSubWindow(BaseMainWindow):
         self.statusBar().hide()
 
     def _setup_basic_toolbar(self):
-        """Setup two buttons on the toolbar."""
+        """Set up two buttons on the toolbar."""
         self.buttonleft = QAction('No', self)
         self.buttonleft.triggered.connect(self.left_button_action)
         self.toolbar.addAction(self.buttonleft)
@@ -160,7 +160,7 @@ class BaseSubWindow(BaseMainWindow):
         self.toolbar.addAction(self.buttonright)
 
     def _setup_one_button_toolbar(self):
-        """Setup one button on the toolbar."""
+        """Set up one button on the toolbar."""
         self.toolbar.addWidget(SpacerWidget())
         self.buttonright = QAction('OK', self)
         self.buttonright.triggered.connect(self.right_button_action)
@@ -168,7 +168,7 @@ class BaseSubWindow(BaseMainWindow):
 
     def left_button_action(self):
         """
-        The function called when the left button is pressed.
+        Define the left button action.
 
         The default is to do nothing. This method should be redefined when
         subclassing.
@@ -178,7 +178,7 @@ class BaseSubWindow(BaseMainWindow):
 
     def right_button_action(self):
         """
-        The function called when the right button is pressed.
+        Define the right button action.
 
         The default is to do nothing. This method should be redefined when
         subclassing.
@@ -194,7 +194,7 @@ class BaseSubWindow(BaseMainWindow):
 
     @property
     def base_geometry(self):
-        """(left, top, width, height) : The default window geometry"""
+        """(left, top, width, height) : The default window geometry."""
         return 0, 0, 400, 200
 
 
@@ -255,7 +255,7 @@ class BaseDialog(QDialog):
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def _setup_controlbar(self):
-        """Sets up the top bar which contains the buttons."""
+        """Set up the top bar which contains the buttons."""
         self.controlbar = QWidget()
         controlbarstyle = """
             .QWidget{{
@@ -293,14 +293,14 @@ class BaseDialog(QDialog):
         self.controlbar.addWidget = self.controlbar_addWidget
 
     def _setup_one_button_toolbar(self):
-        """Setup one button on the controlbar."""
+        """Set up one button on the controlbar."""
         self.buttonright = QPushButton('OK', self)
         self.buttonright.clicked.connect(self.right_button_action)
         self.controlbar.addWidget(SpacerWidget())
         self.controlbar.addWidget(self.buttonright)
 
     def _setup_two_button_toolbar(self):
-        """Setup two buttons on the controlbar."""
+        """Set up two buttons on the controlbar."""
         self.buttonleft = QPushButton('No', self)
         self.buttonleft.clicked.connect(self.left_button_action)
         self.controlbar.addWidget(self.buttonleft)
@@ -310,21 +310,15 @@ class BaseDialog(QDialog):
         self.controlbar.addWidget(self.buttonright)
 
     def left_button_action(self):
-        """
-        The function called when the left button is pressed. The default is reject().
-
-        """
+        """Define the left button action. The default is reject()."""
         self.reject()
 
     def right_button_action(self):
-        """
-        The function called when the right button is pressed. The default is accept().
-
-        """
+        """Define the right button action. The default is accept()."""
         self.accept()
 
     def _setup_main_space(self):
-        """ """
+        """Set up the main area of the window."""
         self.main_space = SpacerWidget()
         self.main_space_layout = QVBoxLayout()
         self.main_space.setLayout(self.main_space_layout)
@@ -341,7 +335,7 @@ class BaseDialog(QDialog):
 
     @property
     def base_geometry(self):
-        """(left, top, width, height) : The default window geometry"""
+        """(left, top, width, height) : The default window geometry."""
         return 0, 0, 400, 200
 
 
@@ -436,10 +430,7 @@ class SpacerWidget(QWidget):
 
 
 class QuestionResponse(QWidget):
-    """
-    A combo widget designed to put a question and textbox on one line.
-
-    """
+    """A combo widget designed to put a question and textbox on one line."""
 
     def __init__(self, parent=None):
         """Create a QuestionResponse widget."""
@@ -453,15 +444,12 @@ class QuestionResponse(QWidget):
 
     @property
     def layout(self):
-        """The QLayout used to organise the question and response."""
+        """QLayout: The QLayout used to organise the question and response."""
         return QHBoxLayout()
 
 
 class VQuestionResponse(QuestionResponse):
-    """
-    A combo widget designed to stack a question on top of a textbox.
-
-    """
+    """A combo widget designed to stack a question on top of a textbox."""
 
     def __init__(self, parent=None):
         """Create a VQuestionResponse widget."""
@@ -470,7 +458,7 @@ class VQuestionResponse(QuestionResponse):
 
     @property
     def layout(self):
-        """The QLayout used to organise the question and response."""
+        """QLayout : The QLayout used to organise the question and response."""
         return QVBoxLayout()
 
 
