@@ -256,6 +256,7 @@ class UIFilePlot(QWidget):
             new_xlim = (xhold - new_left_distance,
                         xhold + new_right_distance)
             ax.set_xlim(new_xlim)
+            self._set_xticks()
             self.canvas.draw()
 
     def _keyboard_zoom(self, event):
@@ -307,6 +308,7 @@ class UIFilePlot(QWidget):
         cond2 = new_xlim[0] < mdates.date2num(self.data.signals.index[-1])
         if cond1 and cond2:
             ax.set_xlim(new_xlim)
+            self._set_xticks()
             self.canvas.draw()
 
     def _keyboard_pan(self, event):
