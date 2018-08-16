@@ -219,13 +219,13 @@ def extract_accelerometer_data(body, firmware, datx):
         if datx:
             tail = (x == 116 and y == 97 and z == 105 and body[i + 3] == 108)
         else:
-            # TODO change thos to use _old_tail_check?
+            # TODO change this to use _old_tail_check?
             # Would ^ slow it down - how would numba handle it?
             tail = (x == 0 and y == 0 and z > 0 and
                     body[i+3] == 0 and body[i+4] == 0 and
                     body[i+5] > 0 and body[i+6] > 0 and body[i+7] == 0)
 
-        two54 = (x == 255 and y == 255 and z == 255)
+        two54 = (x == 254 and y == 254 and z == 254)
         two55 = (x == 255 and y == 255 and z == 255)
         invalid = two54 or two55
 
