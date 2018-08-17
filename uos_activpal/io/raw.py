@@ -11,7 +11,6 @@ import errno
 import numpy as np
 import pandas as pd
 from numba import jit
-from .events import ActivpalEvents
 
 
 _Meta = namedtuple('Meta', [
